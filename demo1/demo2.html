@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>test</title>
+	<script src="../vue.min.js"></script>
+</head>
+<body>
+<div id="app">
+	<h1>测试</h1>
+	<!--测试-->
+	<p>发表时间： {{ daration1.toString() }}
+	<p>发表于： {{ daration1 | calFilter }}</p>
+
+	<p>发表时间： {{ daration2.toString() }}
+	<p>发表于： {{ daration2 | calFilter }}</p>
+
+	<p>发表时间： {{ daration3.toString() }}
+	<p>发表于： {{ daration3 | calFilter }}</p>
+
+	<p>发表时间： {{ daration4.toString() }}
+	<p>发表于： {{ daration4 | calFilter }}</p>
+
+	<p>发表时间： {{ daration5.toString() }}
+	<p>发表于： {{ daration5 | calFilter }}</p>
+
+	<p>发表时间： {{ daration6.toString() }}
+	<p>发表于： {{ daration6 | calFilter }}</p>
+
+	<p>发表时间： {{ daration7.toString() }}
+	<p>发表于： {{ daration7 | calFilter }}</p>
+
+	<p>发表时间： {{ daration8.toString() }}
+	<p>发表于： {{ daration8 | calFilter }}</p>
+
+</div>
+<script>
+	new Vue({
+		el: '#app',
+		data: {
+			// 根据当前时间稍改一下
+			daration1: new Date(2017,8,5,9,32,0),   //大于1年
+			daration2: new Date(2017,10,18,9,0,0),  //几个月但不在一年内
+			daration3: new Date(2018,5,18,9,0,0),   //一年内差几个月
+			daration4: new Date(2018,8,5,9,32,0),   //差几个星期
+			daration5: new Date(2018,8,17,9,0,0),   //差几天
+			daration6: new Date(2018,8,19,9,0,0),   //差几小时
+			daration7: new Date(2018,8,19,10,37,0), //差几分钟
+			daration8: new Date(2018,8,19,10,57,0)  //差几秒
+		},
+		filters: {
+			calFilter: function(preDate){
+				if(!preDate){
+					return "0 秒前";
+				}
+				let nowDate = new Date();
+				let dar = Math.floor((nowDate.getTime() - preDate.getTime())/1000);
+				
+				if(dar < 0){ // 时间超前
+					return "0 秒前";
+				}
+				else if(dar < 31536000 * 1){ //发表时间不超过1年,可调
+					let day = Math.floor(dar/86400);
+					if(day > 0){ //天表示
+						if(day >= 31){ //天数大于31，用月表示
+							if(nowDate.getFullYear()-preDate.getFullYear()>0){
+								return `${nowDate.getMonth()+12-preDate.getMonth()} 个月前`;
+							}else{
+								return `${nowDate.getMonth()-preDate.getMonth()} 个月前`;
+							}
+						}
+						if(day >= 7){ //大于7小于31
+							return `${Math.floor(day/7)} 周前`;
+						}
+						else return `${day} 天前`;
+					}
+
+					let hour = Math.floor((dar%86400)/3600);
+					if(hour > 0){ //小时表示
+						return `${hour} 小时前`;
+					}
+
+					let minute = Math.floor((dar%86400%3600)/60);
+					if(minute > 0){ //分钟表示
+						return `${minute} 分钟前`;
+					}
+
+					let second = Math.floor(dar%86400%3600%60); //秒表示
+					return `${second} 秒前`;
+				}
+				else{ //时间超过一年，打印日期
+					return `${preDate.getFullYear()}-${preDate.getMonth()+1}-${preDate.getDate()}`;
+				}
+			}
+		}
+	})
+</script>
+</body>
+</html>
